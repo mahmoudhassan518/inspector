@@ -1,0 +1,31 @@
+{
+  "@@locale": "ar",
+  
+  "appName": "المفتش",
+  "cancel": "إلغاء",
+  "retry": "إعادة المحاولة",
+  "error": "خطأ",
+  "success": "نجاح",
+  "loading": "جاري التحميل...",
+  
+  "login": "تسجيل الدخول",
+  "register": "إنشاء حساب",
+  "email": "البريد الإلكتروني",
+  "password": "كلمة المرور",
+  "name": "الاسم",
+  "confirmPassword": "تأكيد كلمة المرور",
+  "dontHaveAccount": "ليس لديك حساب؟ سجل الآن",
+  "alreadyHaveAccount": "لديك حساب بالفعل؟ سجل دخول",
+  "loginSuccess": "تم تسجيل الدخول بنجاح!",
+  "registerSuccess": "تم التسجيل بنجاح!",
+  
+  "pleaseEnterEmail": "يرجى إدخال البريد الإلكتروني",
+  "pleaseEnterValidEmail": "يرجى إدخال بريد إلكتروني صحيح",
+  "pleaseEnterPassword": "يرجى إدخال كلمة المرور",
+  "passwordMinLength": "كلمة المرور يجب أن تكون 6 أحرف على الأقل",
+  "pleaseEnterName": "يرجى إدخال الاسم",
+  "passwordsDoNotMatch": "كلمات المرور غير متطابقة",
+  
+  "selectLanguage": "اختر اللغة",
+  "language": "اللغة"
+}

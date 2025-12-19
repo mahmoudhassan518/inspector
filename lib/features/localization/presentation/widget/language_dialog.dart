@@ -4,6 +4,7 @@ import 'package:get_it/get_it.dart';
 import '../../domain/model/language.dart';
 import '../bloc/language_cubit.dart';
 import '../model/language_state.dart';
+import 'package:inspector/features/localization/app_strings.dart';
 
 /// Shows language selection dialog
 Future<Language?> showLanguageDialog(BuildContext context) {
@@ -20,12 +21,13 @@ class LanguageDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final languageCubit = GetIt.instance<LanguageCubit>();
+    final localizations = AppStrings.of(context);
     
     return BlocBuilder<LanguageCubit, LanguageState>(
       bloc: languageCubit,
       builder: (context, langState) {
         return AlertDialog(
-          title: const Text('Select Language'),
+          title: Text(localizations.selectLanguage),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: Language.supportedLanguages.map((language) {
@@ -49,7 +51,7 @@ class LanguageDialog extends StatelessWidget {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Cancel'),
+              child: Text(localizations.cancel),
             ),
           ],
         );

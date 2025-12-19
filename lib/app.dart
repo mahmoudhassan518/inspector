@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:inspector/l10n/app_localizations.dart';
 
 import 'package:inspector/core/core.dart';
 import 'package:inspector/navigation/navigation.dart';
@@ -29,12 +30,11 @@ class InspectorApp extends StatelessWidget {
             locale: Locale(languageState.currentLanguage.code),
             
             // Supported locales
-            supportedLocales: Language.supportedLanguages
-                .map((lang) => Locale(lang.code))
-                .toList(),
+            supportedLocales: AppLocalizations.supportedLocales,
             
-            // Localization delegates
+            // Localization delegates (auto-generated + Material/Cupertino)
             localizationsDelegates: const [
+              AppLocalizations.delegate,
               GlobalMaterialLocalizations.delegate,
               GlobalWidgetsLocalizations.delegate,
               GlobalCupertinoLocalizations.delegate,

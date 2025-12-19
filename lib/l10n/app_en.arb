@@ -1,0 +1,31 @@
+{
+  "@@locale": "en",
+  
+  "appName": "Inspector",
+  "cancel": "Cancel",
+  "retry": "Retry",
+  "error": "Error",
+  "success": "Success",
+  "loading": "Loading...",
+  
+  "login": "Login",
+  "register": "Register",
+  "email": "Email",
+  "password": "Password",
+  "name": "Name",
+  "confirmPassword": "Confirm Password",
+  "dontHaveAccount": "Don't have an account? Register",
+  "alreadyHaveAccount": "Already have an account? Login",
+  "loginSuccess": "Login successful!",
+  "registerSuccess": "Registration successful!",
+  
+  "pleaseEnterEmail": "Please enter your email",
+  "pleaseEnterValidEmail": "Please enter a valid email",
+  "pleaseEnterPassword": "Please enter your password",
+  "passwordMinLength": "Password must be at least 6 characters",
+  "pleaseEnterName": "Please enter your name",
+  "passwordsDoNotMatch": "Passwords do not match",
+  
+  "selectLanguage": "Select Language",
+  "language": "Language"
+}

@@ -92,6 +92,49 @@ Presentation → Domain ← Data
 - Modular DI per feature
 - Configurable network settings
 
+### Localization (i18n)
+
+Multi-language support using Flutter's official localization system:
+
+**Files:**
+```
+lib/l10n/
+├── app_en.arb    # English (template)
+└── app_ar.arb    # Arabic
+```
+
+**Usage in widgets (with context):**
+```dart
+import 'package:inspector/features/localization/localization_feature.dart';
+
+final localizations = AppStrings.of(context);
+Text(localizations.login);
+```
+
+**Usage in BLoC/mapper (without context):**
+```dart
+final localizations = AppStrings.current;
+final message = localizations.pleaseEnterEmail;
+```
+
+**Adding new strings:**
+1. Add to `lib/l10n/app_en.arb`:
+   ```json
+   "myNewString": "Hello World"
+   ```
+2. Add to `lib/l10n/app_ar.arb`:
+   ```json
+   "myNewString": "مرحبا بالعالم"
+   ```
+3. Generate code:
+   ```bash
+   flutter gen-l10n
+   ```
+4. Use in code:
+   ```dart
+   AppStrings.of(context).myNewString
+   ```
+
 ## 🚀 Getting Started
 
 ```bash

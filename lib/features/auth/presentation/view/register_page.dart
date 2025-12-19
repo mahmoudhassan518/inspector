@@ -6,6 +6,7 @@ import 'package:inspector/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:inspector/features/auth/presentation/model/auth_effects.dart';
 import 'package:inspector/features/auth/presentation/model/auth_events.dart';
 import 'package:inspector/features/auth/presentation/model/auth_state.dart';
+import 'package:inspector/features/localization/localization_feature.dart';
 import 'package:inspector/injection_container.dart';
 
 /// Register page - provides BLoC via GetIt
@@ -47,8 +48,15 @@ class _RegisterPageContentState extends State<_RegisterPageContent> {
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppStrings.of(context);
+    
     return Scaffold(
-      appBar: AppBar(title: const Text('Register')),
+      appBar: AppBar(
+        title: Text(localizations.register),
+        actions: const [
+          LanguageIconButton(),
+        ],
+      ),
       body: StateView(
         cubit: context.read<AuthBloc>().commonCubit,
         child: BlocConsumer<AuthBloc, AuthState>(
@@ -65,6 +73,8 @@ class _RegisterPageContentState extends State<_RegisterPageContent> {
   }
 
   Widget _buildContent(BuildContext context, AuthState state) {
+    final localizations = AppStrings.of(context);
+    
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16.0),
       child: Form(
@@ -74,17 +84,17 @@ class _RegisterPageContentState extends State<_RegisterPageContent> {
             const SizedBox(height: 40),
             TextFormField(
               controller: _nameController,
-              decoration: const InputDecoration(
-                labelText: 'Name',
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.person),
+              decoration: InputDecoration(
+                labelText: localizations.name,
+                border: const OutlineInputBorder(),
+                prefixIcon: const Icon(Icons.person),
               ),
               validator: (value) {
                 if (value == null || value.isEmpty) {
-                  return 'Please enter your name';
+                  return localizations.pleaseEnterName;
                 }
                 if (value.length < 2) {
-                  return 'Name must be at least 2 characters';
+                  return localizations.pleaseEnterName;
                 }
                 return null;
               },
@@ -92,18 +102,18 @@ class _RegisterPageContentState extends State<_RegisterPageContent> {
             const SizedBox(height: 16),
             TextFormField(
               controller: _emailController,
-              decoration: const InputDecoration(
-                labelText: 'Email',
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.email),
+              decoration: InputDecoration(
+                labelText: localizations.email,
+                border: const OutlineInputBorder(),
+                prefixIcon: const Icon(Icons.email),
               ),
               keyboardType: TextInputType.emailAddress,
               validator: (value) {
                 if (value == null || value.isEmpty) {
-                  return 'Please enter your email';
+                  return localizations.pleaseEnterEmail;
                 }
                 if (!value.contains('@')) {
-                  return 'Please enter a valid email';
+                  return localizations.pleaseEnterValidEmail;
                 }
                 return null;
               },
@@ -111,18 +121,18 @@ class _RegisterPageContentState extends State<_RegisterPageContent> {
             const SizedBox(height: 16),
             TextFormField(
               controller: _passwordController,
-              decoration: const InputDecoration(
-                labelText: 'Password',
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.lock),
+              decoration: InputDecoration(
+                labelText: localizations.password,
+                border: const OutlineInputBorder(),
+                prefixIcon: const Icon(Icons.lock),
               ),
               obscureText: true,
               validator: (value) {
                 if (value == null || value.isEmpty) {
-                  return 'Please enter your password';
+                  return localizations.pleaseEnterPassword;
                 }
                 if (value.length < 6) {
-                  return 'Password must be at least 6 characters';
+                  return localizations.passwordMinLength;
                 }
                 return null;
               },
@@ -130,18 +140,18 @@ class _RegisterPageContentState extends State<_RegisterPageContent> {
             const SizedBox(height: 16),
             TextFormField(
               controller: _confirmPasswordController,
-              decoration: const InputDecoration(
-                labelText: 'Confirm Password',
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.lock_outline),
+              decoration: InputDecoration(
+                labelText: localizations.confirmPassword,
+                border: const OutlineInputBorder(),
+                prefixIcon: const Icon(Icons.lock_outline),
               ),
               obscureText: true,
               validator: (value) {
                 if (value == null || value.isEmpty) {
-                  return 'Please confirm your password';
+                  return localizations.pleaseEnterPassword;
                 }
                 if (value != _passwordController.text) {
-                  return 'Passwords do not match';
+                  return localizations.passwordsDoNotMatch;
                 }
                 return null;
               },
@@ -152,13 +162,13 @@ class _RegisterPageContentState extends State<_RegisterPageContent> {
               height: 48,
               child: ElevatedButton(
                 onPressed: _onRegisterPressed,
-                child: const Text('Register'),
+                child: Text(localizations.register),
               ),
             ),
             const SizedBox(height: 16),
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Already have an account? Login'),
+              child: Text(localizations.alreadyHaveAccount),
             ),
           ],
         ),
@@ -179,11 +189,13 @@ class _RegisterPageContentState extends State<_RegisterPageContent> {
   }
 
   void _handleEffect(BuildContext context, AuthEffect effect) {
+    final localizations = AppStrings.of(context);
+    
     switch (effect) {
       case NavigateToHome():
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Registration successful!'),
+          SnackBar(
+            content: Text(localizations.registerSuccess),
             backgroundColor: Colors.green,
           ),
         );

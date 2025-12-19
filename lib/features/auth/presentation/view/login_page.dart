@@ -44,9 +44,11 @@ class _LoginPageContentState extends State<_LoginPageContent> {
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppStrings.of(context);
+    
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Login'),
+        title: Text(localizations.login),
         actions: const [
           LanguageIconButton(),
         ],
@@ -67,6 +69,8 @@ class _LoginPageContentState extends State<_LoginPageContent> {
   }
 
   Widget _buildContent(BuildContext context, AuthState state) {
+    final localizations = AppStrings.of(context);
+    
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -78,17 +82,17 @@ class _LoginPageContentState extends State<_LoginPageContent> {
               const SizedBox(height: 48),
               TextFormField(
                 controller: _emailController,
-                decoration: const InputDecoration(
-                  labelText: 'Email',
-                  border: OutlineInputBorder(),
+                decoration: InputDecoration(
+                  labelText: localizations.email,
+                  border: const OutlineInputBorder(),
                 ),
                 keyboardType: TextInputType.emailAddress,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Please enter your email';
+                    return localizations.pleaseEnterEmail;
                   }
                   if (!value.contains('@')) {
-                    return 'Please enter a valid email';
+                    return localizations.pleaseEnterValidEmail;
                   }
                   return null;
                 },
@@ -96,17 +100,17 @@ class _LoginPageContentState extends State<_LoginPageContent> {
               const SizedBox(height: 16),
               TextFormField(
                 controller: _passwordController,
-                decoration: const InputDecoration(
-                  labelText: 'Password',
-                  border: OutlineInputBorder(),
+                decoration: InputDecoration(
+                  labelText: localizations.password,
+                  border: const OutlineInputBorder(),
                 ),
                 obscureText: true,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Please enter your password';
+                    return localizations.pleaseEnterPassword;
                   }
                   if (value.length < 6) {
-                    return 'Password must be at least 6 characters';
+                    return localizations.passwordMinLength;
                   }
                   return null;
                 },
@@ -117,13 +121,13 @@ class _LoginPageContentState extends State<_LoginPageContent> {
                 height: 48,
                 child: ElevatedButton(
                   onPressed: _onLoginPressed,
-                  child: const Text('Login'),
+                  child: Text(localizations.login),
                 ),
               ),
               const SizedBox(height: 16),
               TextButton(
                 onPressed: () => Navigator.of(context).pushNamed('/register'),
-                child: const Text('Don\'t have an account? Register'),
+                child: Text(localizations.dontHaveAccount),
               ),
               const SizedBox(height: 48),
             ],
@@ -145,11 +149,13 @@ class _LoginPageContentState extends State<_LoginPageContent> {
   }
 
   void _handleEffect(BuildContext context, AuthEffect effect) {
+    final localizations = AppStrings.of(context);
+    
     switch (effect) {
       case NavigateToHome():
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Login successful!'),
+          SnackBar(
+            content: Text(localizations.loginSuccess),
             backgroundColor: Colors.green,
           ),
         );

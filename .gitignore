@@ -79,3 +79,6 @@ app.*.map.json
 
 # Pubspec lock in packages (optional - some prefer to commit)
 # packages/**/pubspec.lock
+/lib/l10n/app_localizations.dart
+/lib/l10n/app_localizations_ar.dart
+/lib/l10n/app_localizations_en.dart
