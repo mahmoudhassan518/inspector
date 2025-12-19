@@ -1,5 +1,4 @@
-import 'error_model.dart';
-import 'network_exception.dart';
+import 'package:inspector_core/inspector_core.dart';
 
 /// Abstract error mapper interface
 abstract class ErrorMapper<T extends ErrorModel> {

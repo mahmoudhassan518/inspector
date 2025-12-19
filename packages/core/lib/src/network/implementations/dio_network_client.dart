@@ -1,7 +1,8 @@
 import 'package:dio/dio.dart';
 
-import 'network_client.dart';
-import 'network_exception.dart';
+import '../interfaces/network_client.dart';
+import '../exceptions/network_exception.dart';
+
 
 /// Dio implementation of NetworkClient
 /// Error handling is done via ErrorInterceptor

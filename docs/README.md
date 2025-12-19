@@ -1,9 +1,6 @@
 # Architecture Docs
 
-## ⚠️ AI Instructions
-
-1. **READ docs before editing code** - see table below
-2. **DO NOT edit any docs/** files unless user explicitly asks
+## AI Instructions
 
 | Editing | Read First |
 |---------|------------|
@@ -15,53 +12,61 @@
 | `features/*/data/` | `docs/feature/data.md` |
 | `features/*/presentation/` | `docs/feature/presentation.md` |
 | `features/*/di/` | `docs/feature/di.md` |
-| `injection_container.dart` | `docs/core.md` |
 
-## Structure
+## Project Structure
 
-| Location | Purpose |
-|----------|---------|
-| `packages/core/` | Interfaces & base classes (reusable library) |
-| `lib/core/` | App implementations (TokenProvider, config) |
-| `lib/navigation/` | App router configuration |
-| `lib/features/` | App features |
+```
+inspector/
+├── packages/core/           # Reusable library (inspector_core)
+│   └── lib/src/
+│       ├── bloc/            # BaseBloc, SingleEffect
+│       ├── common/          # CommonCubit, CommonState
+│       ├── exceptions/      # AppException hierarchy
+│       ├── navigation/      # NavigationService
+│       ├── network/         # Interfaces, implementations, interceptors
+│       ├── usecases/        # UseCase base
+│       └── widgets/         # StateView
+│
+├── lib/
+│   ├── core/                # App implementations
+│   │   ├── di/              # core_injection_container.dart
+│   │   ├── network/         # TokenProviderImpl, NetworkConfig
+│   │   └── exceptions/      # CommonErrorCodes
+│   ├── navigation/          # AppRouter
+│   └── features/            # Feature modules
+│
+└── docs/                    # This documentation
+```
 
 ## Feature Structure
 
 ```
 features/{feature}/
-├── domain/          # Entities, repositories, use cases
-├── data/            # Data sources, models, mappers
-├── presentation/    # BLoC, pages, widgets
-├── navigation/      # Feature routes
-└── di/              # Feature DI
+├── {feature}_feature.dart   # Barrel export
+├── error_codes.dart         # Feature error codes
+├── di/                      # Feature DI
+├── navigation/              # Feature routes
+├── domain/                  # Entities, repositories, use cases
+├── data/                    # Data sources, models
+└── presentation/            # BLoC, pages, widgets
 ```
 
-## Navigation
+## Docs
 
-- [Navigation](./navigation.md) - go_router setup, per-feature routes
-- [Core](./core.md) - Package interfaces + App implementations  
-- [Feature Structure](./feature/README.md) - How to structure features
+- [Core](./core.md) - Package + app implementations
+- [Navigation](./navigation.md) - go_router, per-feature routes
+- [Feature](./feature/README.md) - Feature layer guides
 
 ## Imports
 
 ```dart
-// App core (includes package + implementations)
-import 'package:inspector/core/core.dart';
-
-// Navigation
-import 'package:inspector/navigation/navigation.dart';
-
-// Feature navigation
-import 'package:inspector/features/auth/navigation/auth_routes.dart';
+import 'package:inspector/core/core.dart';           // App core (includes package)
+import 'package:inspector_core/inspector_core.dart'; // Package only
 ```
 
-## Layer Flow
+## Flow
 
 ```
 Presentation → Domain → Data → Network
     BLoC    → UseCase → Repo → NetworkClient
-
-Navigation (go_router)
-    AppRouter → FeatureRoutes → Pages
 ```

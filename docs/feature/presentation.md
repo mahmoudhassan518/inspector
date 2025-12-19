@@ -7,21 +7,18 @@ presentation/
 ├── model/
 │   ├── {feature}_events.dart
 │   ├── {feature}_effects.dart  
-│   ├── {feature}_state.dart    # Data only
-│   └── mapper/
-│       └── {name}_state_mapper.dart
+│   └── {feature}_state.dart
 ├── bloc/
+│   └── {feature}_bloc.dart
 ├── view/
-│   └── {name}_page.dart  # StatelessWidget + _Content StatefulWidget
+│   └── {name}_page.dart
 └── widget/
 ```
 
 ## Page Pattern
 
-Two classes per page:
-
 ```dart
-/// 1. StatelessWidget - provides BLoC via GetIt
+/// StatelessWidget - provides BLoC via GetIt
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
 
@@ -34,7 +31,7 @@ class LoginPage extends StatelessWidget {
   }
 }
 
-/// 2. StatefulWidget - has builder and listener
+/// StatefulWidget - has builder and listener
 class _LoginPageContent extends StatefulWidget {
   const _LoginPageContent();
   @override
@@ -57,50 +54,53 @@ class _LoginPageContentState extends State<_LoginPageContent> {
   
   void _handleListener(BuildContext context, AuthState state) {
     final effect = state.effect?.current;
-    if (effect != null) handleEffect(effect);
+    if (effect != null) { /* handle effect */ }
   }
   
   Widget _buildContent(BuildContext context, AuthState state) => ...;
 }
 ```
 
-## State (Data Only)
+## State
 
 ```dart
 class AuthState extends Equatable {
   final bool isAuthenticated;
   final UserStateModel? user;
   final SingleEffect<AuthEffect>? effect;
+  
+  @override
+  List<Object?> get props => [isAuthenticated, user, effect];
 }
 ```
 
-## State Mapper
-
-`presentation/model/mapper/{name}_state_mapper.dart`
-
-```dart
-extension UserEntityToStateMapper on UserEntity {
-  UserStateModel toStateModel() => UserStateModel(
-    displayName: name ?? email ?? 'User',
-  );
-}
-```
-
-## BLoC
+## BLoC with Error Handling
 
 ```dart
 class AuthBloc extends BaseBloc<AuthEvent, AuthState> {
-  AuthBloc({CommonCubit? commonCubit}) 
+  final LoginUseCase loginUseCase;
+  
+  AuthBloc({required this.loginUseCase, CommonCubit? commonCubit}) 
     : super(AuthState(), commonCubit: commonCubit);
 
-  Future<void> _onLogin(event, emit) async {
+  Future<void> _onLogin(LoginEvent event, Emitter<AuthState> emit) async {
     await launchBlock(
-      onStart: () => showLoading(),
-      onError: (e, msg) { hideLoading(); showError(msg); },
-      block: () async {
-        final user = await loginUseCase(...);
+      onStart: showLoading,
+      onError: (error, message) {
         hideLoading();
-        emit(state.copyWith(user: user.toStateModel()));
+        if (error is BusinessException) {
+          switch (error.errorCode) {
+            case AuthErrorCodes.userNotVerified:
+              emit(state.copyWith(needsVerification: true));
+              return;
+          }
+        }
+        showError(message ?? 'Error');
+      },
+      block: () async {
+        final user = await loginUseCase(LoginParams(...));
+        hideLoading();
+        emit(state.copyWith(isAuthenticated: true, user: user));
       },
     );
   }

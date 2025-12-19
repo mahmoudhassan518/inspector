@@ -1,8 +1,9 @@
 import 'package:dio/dio.dart';
 
-import 'error_model.dart';
-import 'error_mapper.dart';
-import 'network_exception.dart';
+import '../interfaces/error_model.dart';
+import '../interfaces/error_mapper.dart';
+import '../exceptions/network_exception.dart';
+
 
 /// Error interceptor for mapping Dio errors to NetworkExceptions
 /// Skips 401 errors - those are handled by AuthInterceptor

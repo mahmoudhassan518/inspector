@@ -2,17 +2,13 @@
 
 ## NavigationService (Core Package)
 
-`packages/core/lib/src/navigation/navigation_service.dart`
-
-Global navigation service for programmatic navigation:
-
 ```dart
 import 'package:inspector_core/inspector_core.dart';
 
 // Navigate with push
 navigationService.navigateTo('/profile');
 
-// Navigate and clear stack (replaces current)
+// Navigate and clear stack
 navigationService.navigateTo('/home', clearTop: true);
 
 // Go directly (replace)
@@ -20,23 +16,19 @@ navigationService.go('/login');
 
 // Go back
 navigationService.back();
-
-// Pop with result
-navigationService.pop(context, result);
 ```
 
 ## App Router
 
-`lib/navigation/app_router.dart`
+Location: `lib/navigation/app_router.dart`
 
 ```dart
 class AppRouter {
   static final GoRouter router = GoRouter(
-    navigatorKey: navigationService.navigatorKey,  // Uses NavigationService key
+    navigatorKey: navigationService.navigatorKey,
     routes: [
       GoRoute(path: '/', builder: ...),
       ...AuthRoutes.routes,
-      ...HomeRoutes.routes,
     ],
   );
 }
@@ -44,20 +36,9 @@ class AppRouter {
 
 ## Feature Routes
 
-Each feature has its own navigation folder:
-
-```
-features/{feature}/
-└── navigation/
-    ├── {feature}_routes.dart   # Routes + extensions
-    └── navigation.dart         # Barrel
-```
-
-### Example: Auth Routes
+Location: `features/{feature}/navigation/{feature}_routes.dart`
 
 ```dart
-// features/auth/navigation/auth_routes.dart
-
 class AuthRoutes {
   static const String login = '/login';
   static const String register = '/register';
@@ -66,12 +47,7 @@ class AuthRoutes {
     GoRoute(
       path: login,
       name: 'login',
-      builder: withRebuildKey((context, state) => const LoginPage()),
-    ),
-    GoRoute(
-      path: register,
-      name: 'register',
-      builder: withRebuildKey((context, state) => const RegisterPage()),
+      builder: withRebuildKey((ctx, state) => const LoginPage()),
     ),
   ];
 }
@@ -84,47 +60,18 @@ extension AuthNavigation on BuildContext {
       go(AuthRoutes.login);
     }
   }
-  
-  void goToRegister() => go(AuthRoutes.register);
 }
 ```
 
-## withRebuildKey Helper
+## withRebuildKey
 
 Forces page rebuild when using `clearTop: true`:
 
 ```dart
-GoRoute(
-  path: '/home',
-  builder: withRebuildKey((context, state) => const HomePage()),
-)
-```
-
-## Usage
-
-```dart
-// Using extensions (recommended)
-context.goToLogin();
-context.goToLogin(clearTop: true);  // Clears stack
-
-// Using NavigationService directly
-navigationService.navigateTo('/profile');
-navigationService.go('/home');
-navigationService.back();
-
-// Standard go_router
-context.go('/login');
-context.push('/profile');
+builder: withRebuildKey((ctx, state) => const HomePage())
 ```
 
 ## Adding Feature Routes
 
 1. Create `features/{feature}/navigation/{feature}_routes.dart`
-2. Add routes to `AppRouter`:
-
-```dart
-routes: [
-  ...AuthRoutes.routes,
-  ...NewFeatureRoutes.routes,  // Add here
-],
-```
+2. Add to AppRouter: `...NewRoutes.routes`

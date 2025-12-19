@@ -30,13 +30,16 @@ inspector/
 ├── lib/
 │   ├── core/                    # App-specific implementations
 │   │   ├── di/                  # Dependency Injection
-│   │   └── network/             # TokenProvider, Config
+│   │   ├── network/             # TokenProvider, Config
+│   │   └── exceptions/          # CommonErrorCodes
 │   │
 │   ├── navigation/              # App router (go_router)
 │   │   └── app_router.dart
 │   │
 │   └── features/                # Feature modules
 │       └── {feature}/
+│           ├── {feature}_feature.dart  # Barrel export
+│           ├── error_codes.dart        # Feature error codes
 │           ├── domain/          # Entities, Repositories, UseCases
 │           ├── data/            # Data sources, Models, Mappers
 │           ├── presentation/    # BLoC, Pages, Widgets
@@ -64,6 +67,7 @@ A **standalone Flutter package** containing reusable utilities:
 | `CommonCubit` | Loading states, snackbars, toasts |
 | `StateView` | Widget wrapper for loading overlays |
 | `NetworkClient` | HTTP client interface + Dio implementation |
+| `BusinessException` | Custom error code handling |
 | `ErrorInterceptor` | Error mapping to NetworkExceptions |
 | `AuthInterceptor` | Token auth + 401 handling |
 | `NavigationService` | Programmatic navigation |

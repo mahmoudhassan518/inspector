@@ -1,29 +1,31 @@
 # Feature DI
 
-Each feature has DI folder: `features/{feature}/di/{feature}_injection_container.dart`
+Location: `features/{feature}/di/{feature}_injection_container.dart`
 
 ## Feature DI File
 
-`lib/features/auth/di/auth_injection_container.dart`:
-
 ```dart
 import 'package:get_it/get_it.dart';
+import 'package:inspector/core/core.dart';
 
 final sl = GetIt.instance;
 
 Future<void> initAuthFeature() async {
   // Data Sources
   sl.registerLazySingleton<AuthRemoteDataSource>(
-    () => AuthRemoteDataSourceImpl(networkClient: sl()));
+    () => AuthRemoteDataSourceImpl(networkClient: sl()),
+  );
 
   // Repository
   sl.registerLazySingleton<AuthRepository>(
-    () => AuthRepositoryImpl(remoteDataSource: sl(), localDataSource: sl()));
+    () => AuthRepositoryImpl(remoteDataSource: sl()),
+  );
 
   // Use Cases
   sl.registerLazySingleton(() => LoginUseCase(sl()));
+  sl.registerLazySingleton(() => RegisterUseCase(sl()));
 
-  // BLoC (Factory - new CommonCubit per BLoC)
+  // BLoC (Factory - new instance each time)
   sl.registerFactory(() => AuthBloc(
     commonCubit: CommonCubit(),
     loginUseCase: sl(),
@@ -33,17 +35,18 @@ Future<void> initAuthFeature() async {
 
 ## Main injection_container.dart
 
-Core + Network only, imports feature DIs:
+`lib/injection_container.dart`:
 
 ```dart
+import 'package:inspector/core/di/core_injection_container.dart';
 import 'package:inspector/features/auth/di/auth_injection_container.dart';
 
 Future<void> initDependencies() async {
-  await _initCore();
-  await _initNetworkModule();
+  await initCore();
   
   // Features
   await initAuthFeature();
+  // await initHomeFeature();
 }
 ```
 
@@ -51,4 +54,4 @@ Future<void> initDependencies() async {
 
 1. Create `features/{name}/di/{name}_injection_container.dart`
 2. Define `init{Name}Feature()` function
-3. Import and call in `injection_container.dart`
+3. Import and call in `lib/injection_container.dart`

@@ -1,7 +1,8 @@
 import 'package:dio/dio.dart';
 
-import 'token_provider.dart';
-import 'auth_header_provider.dart';
+import '../interfaces/token_provider.dart';
+import '../interfaces/auth_header_provider.dart';
+
 
 /// Default Bearer token header provider
 class _DefaultBearerHeaderProvider implements AuthHeaderProvider {

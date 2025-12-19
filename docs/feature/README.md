@@ -1,10 +1,13 @@
 # Feature Structure
 
 ```
-features/[feature]/
+features/{feature}/
+├── {feature}_feature.dart      # Barrel export
+├── error_codes.dart            # Feature error codes
 ├── di/
 │   └── {feature}_injection_container.dart
-├── {feature}_feature.dart      # Barrel export
+├── navigation/
+│   └── {feature}_routes.dart
 ├── data/
 │   ├── model/
 │   │   ├── {name}_response.dart
@@ -19,18 +22,40 @@ features/[feature]/
     ├── model/
     │   ├── {feature}_events.dart
     │   ├── {feature}_effects.dart
-    │   ├── {feature}_state.dart
-    │   └── mapper/
+    │   └── {feature}_state.dart
     ├── bloc/
     ├── view/
     └── widget/
 ```
 
-## Mapper Flow
+## Feature Barrel
 
+`{feature}_feature.dart`:
+```dart
+export 'di/{feature}_injection_container.dart';
+export 'presentation/view/login_page.dart';
+export 'presentation/view/register_page.dart';
 ```
-Response → Entity → StateModel
-  (data)   (domain)   (presentation)
+
+## Error Codes
+
+Each feature has `error_codes.dart`:
+
+```dart
+abstract class AuthErrorCodes {
+  static const userNotVerified = 'USER_NOT_VERIFIED';
+  static const invalidCredentials = 'INVALID_CREDENTIALS';
+}
+```
+
+Use in BLoC:
+```dart
+if (error is BusinessException) {
+  switch (error.errorCode) {
+    case AuthErrorCodes.userNotVerified:
+      // handle
+  }
+}
 ```
 
 ## Layer Docs

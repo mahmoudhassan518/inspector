@@ -1,4 +1,5 @@
-import 'error_model.dart';
+import '../interfaces/error_model.dart';
+
 
 /// Default error model implementation
 class DefaultErrorModel implements ErrorModel {
