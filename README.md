@@ -28,6 +28,10 @@ inspector/
 │               └── widgets/     # StateView
 │
 ├── lib/
+│   ├── inspector/               # Global app state
+│   │   ├── inspector_bloc.dart  # InspectorBloc (language, theme, etc.)
+│   │   └── inspector_state.dart
+│   │
 │   ├── core/                    # App-specific implementations
 │   │   ├── di/                  # Dependency Injection
 │   │   ├── network/             # TokenProvider, Config
@@ -37,20 +41,18 @@ inspector/
 │   │   └── app_router.dart
 │   │
 │   └── features/                # Feature modules
+│       ├── localization/        # Language selection (en, ar)
+│       ├── auth/                # Authentication
 │       └── {feature}/
 │           ├── {feature}_feature.dart  # Barrel export
 │           ├── error_codes.dart        # Feature error codes
 │           ├── domain/          # Entities, Repositories, UseCases
 │           ├── data/            # Data sources, Models, Mappers
-│           ├── presentation/    # BLoC, Pages, Widgets
+│           ├── presentation/    # BLoC/Cubit, Pages, Widgets
 │           ├── navigation/      # Feature routes
 │           └── di/              # Feature DI
 │
 ├── docs/                        # Architecture documentation
-│   ├── README.md                # AI instructions & overview
-│   ├── core.md                  # Core package docs
-│   ├── navigation.md            # Navigation docs
-│   └── feature/                 # Feature layer docs
 │
 └── pubspec.yaml
 ```
@@ -116,6 +118,7 @@ Detailed documentation in `docs/`:
 
 - **Flutter** - UI framework
 - **flutter_bloc** - State management
+- **flutter_localizations** - i18n support (en, ar)
 - **go_router** - Navigation
 - **dio** - HTTP client
 - **get_it** - Dependency injection

@@ -11,14 +11,20 @@ import 'package:inspector/core/core.dart';
 final sl = GetIt.instance;
 
 Future<void> initAuthFeature() async {
-  // Data Sources
-  sl.registerLazySingleton<AuthRemoteDataSource>(
-    () => AuthRemoteDataSourceImpl(networkClient: sl()),
+  // Data Sources (concrete classes - no abstract)
+  sl.registerLazySingleton(
+    () => AuthRemoteDataSource(networkClient: sl()),
+  );
+  sl.registerLazySingleton(
+    () => AuthLocalDataSource(prefs: sl()),
   );
 
-  // Repository
+  // Repository (interface in domain)
   sl.registerLazySingleton<AuthRepository>(
-    () => AuthRepositoryImpl(remoteDataSource: sl()),
+    () => AuthRepositoryImpl(
+      remoteDataSource: sl(),
+      localDataSource: sl(),
+    ),
   );
 
   // Use Cases
@@ -33,6 +39,15 @@ Future<void> initAuthFeature() async {
 }
 ```
 
+## Registration Rules
+
+| Component | Type | Notes |
+|-----------|------|-------|
+| DataSource | `registerLazySingleton` | Concrete class, no type param needed |
+| Repository | `registerLazySingleton<Interface>` | Register as interface type |
+| UseCase | `registerLazySingleton` | Concrete class |
+| BLoC | `registerFactory` | New CommonCubit per instance |
+
 ## Main injection_container.dart
 
 `lib/injection_container.dart`:
@@ -46,7 +61,6 @@ Future<void> initDependencies() async {
   
   // Features
   await initAuthFeature();
-  // await initHomeFeature();
 }
 ```
 

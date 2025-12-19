@@ -3,20 +3,11 @@ import 'package:dio/dio.dart';
 import '../interfaces/token_provider.dart';
 import '../interfaces/auth_header_provider.dart';
 
-
-/// Default Bearer token header provider
-class _DefaultBearerHeaderProvider implements AuthHeaderProvider {
-  @override
-  Map<String, String> buildAuthHeaders(String accessToken) {
-    return {'Authorization': 'Bearer $accessToken'};
-  }
-}
-
 /// Auth interceptor for adding authorization headers
 /// and handling token refresh
 class AuthInterceptor extends Interceptor {
   final TokenProvider _tokenProvider;
-  final AuthHeaderProvider _headerProvider;
+  final AuthHeaderProvider? _headerProvider;
   final Future<bool> Function(String refreshToken)? _onRefreshToken;
   final Future<void> Function()? _onUnauthorized;
 
@@ -26,7 +17,7 @@ class AuthInterceptor extends Interceptor {
     Future<bool> Function(String refreshToken)? onRefreshToken,
     Future<void> Function()? onUnauthorized,
   })  : _tokenProvider = tokenProvider,
-        _headerProvider = headerProvider ?? _DefaultBearerHeaderProvider(),
+        _headerProvider = headerProvider,
         _onRefreshToken = onRefreshToken,
         _onUnauthorized = onUnauthorized;
 
@@ -36,8 +27,8 @@ class AuthInterceptor extends Interceptor {
     RequestInterceptorHandler handler,
   ) async {
     final token = await _tokenProvider.getAccessToken();
-    if (token != null) {
-      final headers = _headerProvider.buildAuthHeaders(token);
+    if (token != null && _headerProvider != null) {
+      final headers = await _headerProvider!.buildAuthHeaders(token);
       options.headers.addAll(headers);
     }
     handler.next(options);
@@ -53,8 +44,8 @@ class AuthInterceptor extends Interceptor {
           if (success) {
             // Retry the original request with new token
             final token = await _tokenProvider.getAccessToken();
-            if (token != null) {
-              final headers = _headerProvider.buildAuthHeaders(token);
+            if (token != null && _headerProvider != null) {
+              final headers = await _headerProvider!.buildAuthHeaders(token);
               err.requestOptions.headers.addAll(headers);
               try {
                 final dio = Dio();

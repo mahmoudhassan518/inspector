@@ -6,6 +6,7 @@ import 'package:inspector/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:inspector/features/auth/presentation/model/auth_effects.dart';
 import 'package:inspector/features/auth/presentation/model/auth_events.dart';
 import 'package:inspector/features/auth/presentation/model/auth_state.dart';
+import 'package:inspector/features/localization/localization_feature.dart';
 import 'package:inspector/injection_container.dart';
 
 /// Login page - provides BLoC via GetIt
@@ -46,6 +47,9 @@ class _LoginPageContentState extends State<_LoginPageContent> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Login'),
+        actions: const [
+          LanguageIconButton(),
+        ],
       ),
       body: StateView(
         cubit: context.read<AuthBloc>().commonCubit,
@@ -63,63 +67,67 @@ class _LoginPageContentState extends State<_LoginPageContent> {
   }
 
   Widget _buildContent(BuildContext context, AuthState state) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Form(
-        key: _formKey,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            TextFormField(
-              controller: _emailController,
-              decoration: const InputDecoration(
-                labelText: 'Email',
-                border: OutlineInputBorder(),
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const SizedBox(height: 48),
+              TextFormField(
+                controller: _emailController,
+                decoration: const InputDecoration(
+                  labelText: 'Email',
+                  border: OutlineInputBorder(),
+                ),
+                keyboardType: TextInputType.emailAddress,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter your email';
+                  }
+                  if (!value.contains('@')) {
+                    return 'Please enter a valid email';
+                  }
+                  return null;
+                },
               ),
-              keyboardType: TextInputType.emailAddress,
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter your email';
-                }
-                if (!value.contains('@')) {
-                  return 'Please enter a valid email';
-                }
-                return null;
-              },
-            ),
-            const SizedBox(height: 16),
-            TextFormField(
-              controller: _passwordController,
-              decoration: const InputDecoration(
-                labelText: 'Password',
-                border: OutlineInputBorder(),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: _passwordController,
+                decoration: const InputDecoration(
+                  labelText: 'Password',
+                  border: OutlineInputBorder(),
+                ),
+                obscureText: true,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter your password';
+                  }
+                  if (value.length < 6) {
+                    return 'Password must be at least 6 characters';
+                  }
+                  return null;
+                },
               ),
-              obscureText: true,
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter your password';
-                }
-                if (value.length < 6) {
-                  return 'Password must be at least 6 characters';
-                }
-                return null;
-              },
-            ),
-            const SizedBox(height: 24),
-            SizedBox(
-              width: double.infinity,
-              height: 48,
-              child: ElevatedButton(
-                onPressed: _onLoginPressed,
-                child: const Text('Login'),
+              const SizedBox(height: 24),
+              SizedBox(
+                width: double.infinity,
+                height: 48,
+                child: ElevatedButton(
+                  onPressed: _onLoginPressed,
+                  child: const Text('Login'),
+                ),
               ),
-            ),
-            const SizedBox(height: 16),
-            TextButton(
-              onPressed: () => Navigator.of(context).pushNamed('/register'),
-              child: const Text('Don\'t have an account? Register'),
-            ),
-          ],
+              const SizedBox(height: 16),
+              TextButton(
+                onPressed: () => Navigator.of(context).pushNamed('/register'),
+                child: const Text('Don\'t have an account? Register'),
+              ),
+              const SizedBox(height: 48),
+            ],
+          ),
         ),
       ),
     );

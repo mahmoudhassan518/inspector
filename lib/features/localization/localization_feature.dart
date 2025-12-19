@@ -1,0 +1,7 @@
+/// Localization Feature Barrel Export
+export 'domain/model/language.dart';
+export 'presentation/bloc/language_cubit.dart';
+export 'presentation/model/language_state.dart';
+export 'presentation/widget/language_selector.dart';
+export 'presentation/widget/language_dialog.dart';
+export 'presentation/widget/language_icon_button.dart';

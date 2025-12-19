@@ -39,24 +39,29 @@ extension UserResponseMapper on UserResponse {
 }
 ```
 
-## Remote Data Source
+## Data Source (Concrete Only)
+
+> ⚠️ **No abstract class** - data sources are concrete implementations only.
 
 ```dart
-abstract class AuthRemoteDataSource {
-  Future<UserResponse> login(String email, String password);
-}
-
-class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
+class AuthRemoteDataSource {
   final NetworkClient _networkClient;
   
-  AuthRemoteDataSourceImpl({required NetworkClient networkClient})
+  AuthRemoteDataSource({required NetworkClient networkClient})
     : _networkClient = networkClient;
   
-  @override
   Future<UserResponse> login(String email, String password) async {
     final response = await _networkClient.post<Map<String, dynamic>>(
       '/auth/login',
       body: {'email': email, 'password': password},
+    );
+    return UserResponse.fromJson(response);
+  }
+  
+  Future<UserResponse> register(String name, String email, String password) async {
+    final response = await _networkClient.post<Map<String, dynamic>>(
+      '/auth/register',
+      body: {'name': name, 'email': email, 'password': password},
     );
     return UserResponse.fromJson(response);
   }
@@ -79,3 +84,11 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 }
 ```
+
+## Summary
+
+| Component | Abstract? | Notes |
+|-----------|-----------|-------|
+| Repository | ✅ Yes | Interface in domain, impl in data |
+| DataSource | ❌ No | Concrete class only |
+| Response | ❌ No | Concrete model |

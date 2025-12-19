@@ -3,6 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:inspector/core/core.dart';
+import 'package:inspector/features/localization/data/source/language_local_data_source.dart';
 
 final sl = GetIt.instance;
 
@@ -15,9 +16,11 @@ NetworkConfig networkConfig = const NetworkConfig(
 
 /// Initialize core dependencies
 Future<void> initCore() async {
-  // SharedPreferences
-  final prefs = await SharedPreferences.getInstance();
-  sl.registerLazySingleton<SharedPreferences>(() => prefs);
+  // SharedPreferences (must be first)
+  if (!sl.isRegistered<SharedPreferences>()) {
+    final prefs = await SharedPreferences.getInstance();
+    sl.registerLazySingleton<SharedPreferences>(() => prefs);
+  }
 
   // Global CommonCubit (Singleton - for showGlobalToast)
   sl.registerLazySingleton<CommonCubit>(() => CommonCubit());
@@ -28,14 +31,17 @@ Future<void> initCore() async {
     () => TokenProviderImpl(prefs: sl<SharedPreferences>()),
   );
 
-  // AuthHeaderProvider (Bearer by default)
-  sl.registerLazySingleton<AuthHeaderProvider>(
-    () => BearerAuthHeaderProvider(),
-  );
-
   // ErrorMapper
   sl.registerLazySingleton<ErrorMapper<ErrorModel>>(
     () => DefaultErrorMapper(),
+  );
+}
+
+/// Initialize network layer (call after localization data source is registered)
+void initNetwork() {
+  // AuthHeaderProvider (uses LanguageLocalDataSource for Accept-Language)
+  sl.registerLazySingleton<AuthHeaderProvider>(
+    () => AuthHeaderProvidersImpl(languageDataSource: sl<LanguageLocalDataSource>()),
   );
 
   // Dio with interceptors
@@ -84,7 +90,7 @@ Future<void> initCore() async {
 }
 
 /// Handle unauthorized (401) - logout user
-Future<void> _handleUnauthorized() async{
+Future<void> _handleUnauthorized() async {
   showGlobalToast(
     message: 'Session expired. Please login again.',
     level: AlertType.warning,
