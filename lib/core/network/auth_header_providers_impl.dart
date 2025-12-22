@@ -1,4 +1,4 @@
-import 'package:inspector_core/inspector_core.dart';
+import 'package:inspector_network/inspector_network.dart';
 import 'package:inspector/features/localization/data/source/language_local_data_source.dart';
 import 'package:inspector/features/localization/domain/model/language.dart';
 

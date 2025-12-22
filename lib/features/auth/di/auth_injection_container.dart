@@ -1,5 +1,6 @@
 import 'package:get_it/get_it.dart';
 import 'package:inspector/core/core.dart';
+import 'package:inspector_network/inspector_network.dart';
 import 'package:inspector/features/auth/data/repository/auth_repository_impl.dart';
 import 'package:inspector/features/auth/data/source/auth_local_data_source.dart';
 import 'package:inspector/features/auth/data/source/auth_remote_data_source.dart';

@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-import 'package:inspector_core/inspector_core.dart';
 import '../../domain/model/language.dart';
 
 /// State for LanguageBloc

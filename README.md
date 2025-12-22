@@ -15,17 +15,21 @@ This project is an experimental Flutter application created to test and demonstr
 ```
 inspector/
 ├── packages/                    # Reusable packages
-│   └── core/                    # Core library (standalone)
-│       ├── pubspec.yaml
-│       └── lib/
-│           └── src/
-│               ├── bloc/        # BaseBloc, SingleEffect
-│               ├── common/      # CommonCubit, CommonState
-│               ├── exceptions/  # AppException hierarchy
-│               ├── network/     # NetworkClient, Interceptors, Exceptions
-│               ├── navigation/  # NavigationService
-│               ├── usecases/    # UseCase base class
-│               └── widgets/     # StateView
+│   ├── core/                    # Core library (inspector_core)
+│   │   └── lib/src/
+│   │       ├── bloc/            # BaseBloc, SingleEffect
+│   │       ├── common/          # CommonCubit, CommonState
+│   │       ├── exceptions/      # AppException hierarchy
+│   │       ├── navigation/      # NavigationService
+│   │       ├── usecases/        # UseCase base class
+│   │       └── widgets/         # StateView
+│   │
+│   └── network/                 # Network library (inspector_network)
+│       └── lib/src/
+│           ├── interfaces/      # NetworkClient, ErrorModel, TokenProvider
+│           ├── implementations/ # DioNetworkClient, DefaultErrorMapper
+│           ├── interceptors/    # LoggingInterceptor, AuthInterceptor
+│           └── exceptions/      # NetworkException, BusinessException
 │
 ├── lib/
 │   ├── inspector/               # Global app state
@@ -34,7 +38,7 @@ inspector/
 │   │
 │   ├── core/                    # App-specific implementations
 │   │   ├── di/                  # Dependency Injection
-│   │   ├── network/             # TokenProvider, Config
+│   │   ├── network/             # TokenProvider, Config, AuthHeaderProvider
 │   │   └── exceptions/          # CommonErrorCodes
 │   │
 │   ├── navigation/              # App router (go_router)
@@ -61,18 +65,26 @@ inspector/
 
 ### Core Package (`packages/core/`)
 
-A **standalone Flutter package** containing reusable utilities:
+A **Flutter package** containing reusable utilities:
 
 | Component | Purpose |
 |-----------|---------|
 | `BaseBloc` | BLoC with error handling & CommonCubit integration |
 | `CommonCubit` | Loading states, snackbars, toasts |
 | `StateView` | Widget wrapper for loading overlays |
+| `NavigationService` | Programmatic navigation |
+| `UseCase<T, Params>` | Use case pattern base class |
+
+### Network Package (`packages/network/`)
+
+A **standalone Dart package** for HTTP networking:
+
+| Component | Purpose |
+|-----------|---------|
 | `NetworkClient` | HTTP client interface + Dio implementation |
 | `BusinessException` | Custom error code handling |
 | `ErrorInterceptor` | Error mapping to NetworkExceptions |
 | `AuthInterceptor` | Token auth + 401 handling |
-| `NavigationService` | Programmatic navigation |
 
 ### Feature Structure
 

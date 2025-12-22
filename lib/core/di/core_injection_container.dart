@@ -3,6 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:inspector/core/core.dart';
+import 'package:inspector_network/inspector_network.dart';
 import 'package:inspector/features/localization/data/source/language_local_data_source.dart';
 
 final sl = GetIt.instance;

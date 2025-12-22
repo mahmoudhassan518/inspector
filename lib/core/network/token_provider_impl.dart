@@ -1,6 +1,6 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:inspector_core/inspector_core.dart';
+import 'package:inspector_network/inspector_network.dart';
 
 /// SharedPreferences implementation of TokenProvider
 class TokenProviderImpl implements TokenProvider {

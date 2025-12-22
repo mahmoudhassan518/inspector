@@ -5,6 +5,7 @@
 | Editing | Read First |
 |---------|------------|
 | `packages/core/` | `docs/core.md` |
+| `packages/network/` | `docs/network.md` |
 | `lib/core/` | `docs/core.md` |
 | `lib/navigation/` | `docs/navigation.md` |
 | `features/*/navigation/` | `docs/navigation.md` |
@@ -17,20 +18,27 @@
 
 ```
 inspector/
-├── packages/core/           # Reusable library (inspector_core)
-│   └── lib/src/
-│       ├── bloc/            # BaseBloc, SingleEffect
-│       ├── common/          # CommonCubit, CommonState
-│       ├── exceptions/      # AppException hierarchy
-│       ├── navigation/      # NavigationService
-│       ├── network/         # Interfaces, implementations, interceptors
-│       ├── usecases/        # UseCase base
-│       └── widgets/         # StateView
+├── packages/
+│   ├── core/                # Core library (inspector_core)
+│   │   └── lib/src/
+│   │       ├── bloc/        # BaseBloc, SingleEffect
+│   │       ├── common/      # CommonCubit, CommonState
+│   │       ├── exceptions/  # AppException hierarchy
+│   │       ├── navigation/  # NavigationService
+│   │       ├── usecases/    # UseCase base
+│   │       └── widgets/     # StateView
+│   │
+│   └── network/             # Network library (inspector_network)
+│       └── lib/src/
+│           ├── interfaces/      # NetworkClient, ErrorModel, ErrorMapper, TokenProvider
+│           ├── implementations/ # DioNetworkClient, DefaultErrorMapper
+│           ├── interceptors/    # LoggingInterceptor, AuthInterceptor, ErrorInterceptor
+│           └── exceptions/      # NetworkException, BusinessException
 │
 ├── lib/
 │   ├── core/                # App implementations
 │   │   ├── di/              # core_injection_container.dart
-│   │   ├── network/         # TokenProviderImpl, NetworkConfig
+│   │   ├── network/         # TokenProviderImpl, NetworkConfig, AuthHeaderProviderImpl
 │   │   └── exceptions/      # CommonErrorCodes
 │   ├── navigation/          # AppRouter
 │   └── features/            # Feature modules
@@ -54,14 +62,16 @@ features/{feature}/
 ## Docs
 
 - [Core](./core.md) - Package + app implementations
+- [Network](./network.md) - Standalone network package
 - [Navigation](./navigation.md) - go_router, per-feature routes
 - [Feature](./feature/README.md) - Feature layer guides
 
 ## Imports
 
 ```dart
-import 'package:inspector/core/core.dart';           // App core (includes package)
-import 'package:inspector_core/inspector_core.dart'; // Package only
+import 'package:inspector/core/core.dart';               // App core (includes package)
+import 'package:inspector_core/inspector_core.dart';     // Core package only
+import 'package:inspector_network/inspector_network.dart'; // Network package
 ```
 
 ## Flow

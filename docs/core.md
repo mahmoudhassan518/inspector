@@ -2,6 +2,10 @@
 
 Location: `packages/core/`
 
+A **Flutter package** containing reusable utilities for Flutter apps.
+
+> **Note:** Network functionality has been moved to the separate `inspector_network` package. See [network.md](./network.md).
+
 ## Exports
 
 ```dart
@@ -16,28 +20,19 @@ packages/core/lib/src/
 ├── common/               # CommonCubit, CommonState, AlertType
 ├── exceptions/           # AppException, CacheException, ValidationException
 ├── navigation/           # NavigationService, withRebuildKey
-├── network/
-│   ├── interfaces/       # NetworkClient, ErrorModel, ErrorMapper, TokenProvider
-│   ├── implementations/  # DioNetworkClient, DefaultErrorMapper
-│   ├── interceptors/     # LoggingInterceptor, AuthInterceptor, ErrorInterceptor
-│   └── exceptions/       # NetworkException, BusinessException
 ├── usecases/             # UseCase<T, Params>
 └── widgets/              # StateView
 ```
 
-## Network Exceptions
+## Components
 
-| Exception | Trigger |
+| Component | Purpose |
 |-----------|---------|
-| `NetworkException` | Base |
-| `BusinessException` | API error code (has `errorCode`) |
-| `ServerException` | 5xx |
-| `UnauthorizedException` | 401 |
-| `BadRequestException` | 400 |
-| `ForbiddenException` | 403 |
-| `NotFoundException` | 404 |
-| `NoInternetException` | No connection |
-| `TimeoutException` | Timeout |
+| `BaseBloc` | BLoC with error handling & CommonCubit integration |
+| `CommonCubit` | Loading states, snackbars, toasts |
+| `StateView` | Widget wrapper for loading overlays |
+| `NavigationService` | Programmatic navigation |
+| `UseCase<T, Params>` | Use case pattern base class |
 
 ---
 
@@ -45,14 +40,16 @@ packages/core/lib/src/
 
 Location: `lib/core/`
 
+App-specific implementations that extend the core and network packages.
+
 ```
 lib/core/
 ├── core.dart                 # Re-exports package
 ├── di/
 │   └── core_injection_container.dart
 ├── network/
-│   ├── token_provider_impl.dart
-│   ├── auth_header_providers.dart
+│   ├── token_provider_impl.dart     # TokenProvider implementation
+│   ├── auth_header_providers_impl.dart  # AuthHeaderProvider implementation
 │   └── network_config.dart
 └── exceptions/
     └── error_codes.dart      # CommonErrorCodes
@@ -80,6 +77,7 @@ abstract class AuthErrorCodes {
 
 ```dart
 import 'package:inspector/features/auth/error_codes.dart';
+import 'package:inspector_network/inspector_network.dart';
 
 launchBlock(
   onError: (error, message) {
@@ -101,6 +99,6 @@ launchBlock(
 `lib/core/di/core_injection_container.dart`:
 - SharedPreferences
 - CommonCubit (global)
-- TokenProvider, ErrorMapper
+- TokenProvider, ErrorMapper (from `inspector_network`)
 - Dio (with interceptors)
 - NetworkClient

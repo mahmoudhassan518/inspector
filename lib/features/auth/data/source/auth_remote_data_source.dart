@@ -1,4 +1,4 @@
-import 'package:inspector/core/core.dart';
+import 'package:inspector_network/inspector_network.dart';
 import 'package:inspector/features/auth/data/model/user_response.dart';
 
 /// Remote data source for authentication

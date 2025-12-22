@@ -59,6 +59,8 @@ dependencies:
   # Local Packages
   inspector_core:
     path: packages/core
+  inspector_network:
+    path: packages/network
 
 dev_dependencies:
   flutter_test:

@@ -4,10 +4,11 @@
 /// - BaseBloc with error handling
 /// - CommonCubit for loading/snackbar
 /// - StateView widget
-/// - Network interfaces and implementations
 /// - Navigation service
 /// - Exceptions hierarchy
 /// - UseCase pattern
+/// 
+/// Note: Network functionality is in the separate `inspector_network` package.
 library;
 
 // Bloc
@@ -18,9 +19,6 @@ export 'src/common/common.dart';
 
 // Exceptions
 export 'src/exceptions/exceptions.dart';
-
-// Network (interfaces + implementations)
-export 'src/network/network.dart';
 
 // Navigation
 export 'src/navigation/navigation.dart';
