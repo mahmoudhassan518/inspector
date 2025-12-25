@@ -46,6 +46,9 @@ class InspectorApp extends StatelessWidget {
             
             // Wrap router with StateView for global loading/toasts
             builder: (context, child) {
+              // Update global localizations when locale changes
+              AppStrings.init(context);
+              
               return StateView(
                 cubit: globalCommonCubit,
                 child: child,
