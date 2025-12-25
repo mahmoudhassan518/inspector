@@ -26,6 +26,13 @@
   "pleaseEnterName": "Please enter your name",
   "passwordsDoNotMatch": "Passwords do not match",
   
+  "rememberMe": "Remember me",
+  
+  "birthDate": "Birth Date",
+  "pleaseSelectBirthDate": "Please select your birth date",
+  "mustBeAtLeast18": "You must be at least 18 years old",
+  "selectDate": "Select Date",
+  
   "selectLanguage": "Select Language",
   "language": "Language"
 }

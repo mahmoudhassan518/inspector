@@ -36,6 +36,6 @@ extension AuthNavigation on BuildContext {
     }
   }
 
-  void goToRegister() => go(AuthRoutes.register);
-  void goToForgotPassword() => go(AuthRoutes.forgotPassword);
+  void goToRegister() => navigationService.navigateTo(AuthRoutes.register);
+  void goToForgotPassword() => navigationService.navigateTo(AuthRoutes.forgotPassword);
 }

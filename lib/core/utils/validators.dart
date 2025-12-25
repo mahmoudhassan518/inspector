@@ -214,6 +214,14 @@ class Validators {
     };
   }
   
+  /// Create a URL validator for TextFormField
+  static String? Function(String?) url(String message) {
+    return (value) {
+      if (isBlank(value)) return null;
+      return isValidUrl(value) ? null : message;
+    };
+  }
+  
   /// Combine multiple validators
   /// 
   /// Usage:

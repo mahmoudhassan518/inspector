@@ -6,7 +6,8 @@ import 'package:inspector/features/auth/data/source/auth_local_data_source.dart'
 import 'package:inspector/features/auth/data/source/auth_remote_data_source.dart';
 import 'package:inspector/features/auth/domain/repository/auth_repository.dart';
 import 'package:inspector/features/auth/domain/usecases/usecases.dart';
-import 'package:inspector/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:inspector/features/auth/presentation/bloc/login_bloc.dart';
+import 'package:inspector/features/auth/presentation/bloc/register_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 final sl = GetIt.instance;
@@ -35,14 +36,19 @@ Future<void> initAuthFeature() async {
   sl.registerLazySingleton(() => LogoutUseCase(sl<AuthRepository>()));
   sl.registerLazySingleton(() => GetCurrentUserUseCase(sl<AuthRepository>()));
 
-  // BLoC (Factory - new instance each time)
+  // Login BLoC - handles form state + API calls
   sl.registerFactory(
-    () => AuthBloc(
-      commonCubit: CommonCubit(),
+    () => LoginBloc(
       loginUseCase: sl(),
+      commonCubit: CommonCubit(),
+    ),
+  );
+
+  // Register BLoC - handles form state + API calls
+  sl.registerFactory(
+    () => RegisterBloc(
       registerUseCase: sl(),
-      logoutUseCase: sl(),
-      getCurrentUserUseCase: sl(),
+      commonCubit: CommonCubit(),
     ),
   );
 }

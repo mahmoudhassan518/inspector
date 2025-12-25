@@ -2,158 +2,149 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:inspector/core/core.dart';
-import 'package:inspector/features/auth/presentation/bloc/auth_bloc.dart';
-import 'package:inspector/features/auth/presentation/model/auth_effects.dart';
-import 'package:inspector/features/auth/presentation/model/auth_events.dart';
-import 'package:inspector/features/auth/presentation/model/auth_state.dart';
+import 'package:inspector/features/auth/di/auth_injection_container.dart';
+import 'package:inspector/features/auth/navigation/auth_routes.dart';
+import 'package:inspector/features/auth/presentation/bloc/login_bloc.dart';
+import 'package:inspector/features/auth/presentation/model/login_effect.dart';
+import 'package:inspector/features/auth/presentation/model/login_event.dart';
+import 'package:inspector/features/auth/presentation/model/login_state.dart';
 import 'package:inspector/features/localization/localization_feature.dart';
-import 'package:inspector/injection_container.dart';
 
-/// Login page - provides BLoC via GetIt
+/// Login page with state-based validation
+/// 
+/// Uses single LoginBloc for:
+/// - Form state (email, password, validation)
+/// - API calls with launchBlock
+/// - Navigation effects
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => sl<AuthBloc>()..add(const CheckAuthStatus()),
+      create: (_) => sl<LoginBloc>(),
       child: const _LoginPageContent(),
     );
   }
 }
 
-/// Login page content - stateful with builder and listener
-class _LoginPageContent extends StatefulWidget {
+class _LoginPageContent extends StatelessWidget {
   const _LoginPageContent();
-
-  @override
-  State<_LoginPageContent> createState() => _LoginPageContentState();
-}
-
-class _LoginPageContentState extends State<_LoginPageContent> {
-  final _formKey = GlobalKey<FormState>();
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
-
-  @override
-  void dispose() {
-    _emailController.dispose();
-    _passwordController.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
     final localizations = AppStrings.of(context);
+    final bloc = context.read<LoginBloc>();
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(localizations.login),
-        actions: const [LanguageIconButton()],
-      ),
-      body: StateView(
-        cubit: context.read<AuthBloc>().commonCubit,
-        child: BlocConsumer<AuthBloc, AuthState>(
-          listener: _handleListener,
-          builder: _buildContent,
+    return BlocListener<LoginBloc, LoginState>(
+      listener: _handleEffect,
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(localizations.login),
+          actions: const [
+            LanguageIconButton(),
+          ],
         ),
-      ),
-    );
-  }
-
-  void _handleListener(BuildContext context, AuthState state) {
-    final effect = state.effect?.current;
-    if (effect != null) _handleEffect(context, effect);
-  }
-
-  Widget _buildContent(BuildContext context, AuthState state) {
-    final localizations = AppStrings.of(context);
-
-    return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              const SizedBox(height: 48),
-              TextFormField(
-                controller: _emailController,
-                decoration: InputDecoration(
-                  labelText: localizations.email,
-                  border: const OutlineInputBorder(),
+        body: StateView(
+          cubit: bloc.commonCubit,
+          child: BlocBuilder<LoginBloc, LoginState>(
+            builder: (context, state) {
+              return SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      const SizedBox(height: 48),
+                      
+                      // Email field
+                      TextFormField(
+                        initialValue: state.email,
+                        decoration: InputDecoration(
+                          labelText: localizations.email,
+                          border: const OutlineInputBorder(),
+                          prefixIcon: const Icon(Icons.email),
+                          // Error from state validator (language-aware!)
+                          errorText: state.emailValidator.errorMessage,
+                        ),
+                        keyboardType: TextInputType.emailAddress,
+                        onChanged: (v) => bloc.add(LoginEmailChanged(v)),
+                      ),
+                      
+                      const SizedBox(height: 16),
+                      
+                      // Password field
+                      TextFormField(
+                        initialValue: state.password,
+                        decoration: InputDecoration(
+                          labelText: localizations.password,
+                          border: const OutlineInputBorder(),
+                          prefixIcon: const Icon(Icons.lock),
+                          // Error from state validator (language-aware!)
+                          errorText: state.passwordValidator.errorMessage,
+                        ),
+                        obscureText: true,
+                        onChanged: (v) => bloc.add(LoginPasswordChanged(v)),
+                      ),
+                      
+                      const SizedBox(height: 16),
+                      
+                      // Remember me checkbox
+                      CheckboxListTile(
+                        title: Text(localizations.rememberMe),
+                        value: state.rememberMe,
+                        onChanged: (_) => bloc.add(LoginRememberMeToggled()),
+                        contentPadding: EdgeInsets.zero,
+                        controlAffinity: ListTileControlAffinity.leading,
+                      ),
+                      
+                      const SizedBox(height: 24),
+                      
+                      // Login button
+                      SizedBox(
+                        width: double.infinity,
+                        height: 48,
+                        child: ElevatedButton(
+                          onPressed: () => bloc.add(LoginSubmitted()),
+                          child: Text(localizations.login),
+                        ),
+                      ),
+                      
+                      const SizedBox(height: 16),
+                      
+                      // Register link
+                      TextButton(
+                        onPressed: () => context.goToRegister(),
+                        child: Text(localizations.dontHaveAccount),
+                      ),
+                      
+                      const SizedBox(height: 48),
+                    ],
+                  ),
                 ),
-                keyboardType: TextInputType.emailAddress,
-                validator: Validators.compose([
-                  Validators.required(localizations.pleaseEnterEmail),
-                  Validators.email(localizations.pleaseEnterValidEmail),
-                ]),
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _passwordController,
-                decoration: InputDecoration(
-                  labelText: localizations.password,
-                  border: const OutlineInputBorder(),
-                ),
-                obscureText: true,
-                validator: Validators.compose([
-                  Validators.required(localizations.pleaseEnterPassword),
-                  Validators.minLength(6, localizations.passwordMinLength),
-                ]),
-              ),
-              const SizedBox(height: 24),
-              SizedBox(
-                width: double.infinity,
-                height: 48,
-                child: ElevatedButton(
-                  onPressed: _onLoginPressed,
-                  child: Text(localizations.login),
-                ),
-              ),
-              const SizedBox(height: 16),
-              TextButton(
-                onPressed: () => navigationService.navigateTo('/register'),
-                child: Text(localizations.dontHaveAccount),
-              ),
-              const SizedBox(height: 48),
-            ],
+              );
+            },
           ),
         ),
       ),
     );
   }
 
-  void _onLoginPressed() {
-    if (_formKey.currentState!.validate()) {
-      context.read<AuthBloc>().add(
-        LoginRequested(
-          email: _emailController.text,
-          password: _passwordController.text,
+  void _handleEffect(BuildContext context, LoginState state) {
+    final effect = state.effect?.current;
+    if (effect == null) return;
+
+    final localizations = AppStrings.of(context);
+
+    if (effect is LoginNavigateToHome) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(localizations.loginSuccess),
+          backgroundColor: Colors.green,
         ),
       );
-    }
-  }
-
-  void _handleEffect(BuildContext context, AuthEffect effect) {
-    final localizations = AppStrings.of(context);
-
-    switch (effect) {
-      case NavigateToHome():
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(localizations.loginSuccess),
-            backgroundColor: Colors.green,
-          ),
-        );
-        break;
-      case NavigateToLogin():
-        break;
-      case ShowError():
-        break;
-      case ShowSuccess():
-        break;
+      // Navigate to home
+      navigationService.navigateTo('/home');
     }
   }
 }

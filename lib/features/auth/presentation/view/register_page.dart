@@ -1,199 +1,244 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 
 import 'package:inspector/core/core.dart';
-import 'package:inspector/features/auth/presentation/bloc/auth_bloc.dart';
-import 'package:inspector/features/auth/presentation/model/auth_effects.dart';
-import 'package:inspector/features/auth/presentation/model/auth_events.dart';
-import 'package:inspector/features/auth/presentation/model/auth_state.dart';
+import 'package:inspector/features/auth/di/auth_injection_container.dart';
+import 'package:inspector/features/auth/presentation/bloc/register_bloc.dart';
+import 'package:inspector/features/auth/presentation/model/register_effect.dart';
+import 'package:inspector/features/auth/presentation/model/register_event.dart';
+import 'package:inspector/features/auth/presentation/model/register_state.dart';
 import 'package:inspector/features/localization/localization_feature.dart';
-import 'package:inspector/injection_container.dart';
 
-/// Register page - provides BLoC via GetIt
+/// Register page with state-based validation
+/// 
+/// Uses single RegisterBloc for:
+/// - Form state (name, email, password, birthDate)
+/// - Validation (including date field)
+/// - API calls with launchBlock
 class RegisterPage extends StatelessWidget {
   const RegisterPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => sl<AuthBloc>(),
+      create: (_) => sl<RegisterBloc>(),
       child: const _RegisterPageContent(),
     );
   }
 }
 
-/// Register page content - stateful with builder and listener
-class _RegisterPageContent extends StatefulWidget {
+class _RegisterPageContent extends StatelessWidget {
   const _RegisterPageContent();
-
-  @override
-  State<_RegisterPageContent> createState() => _RegisterPageContentState();
-}
-
-class _RegisterPageContentState extends State<_RegisterPageContent> {
-  final _formKey = GlobalKey<FormState>();
-  final _nameController = TextEditingController();
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
-  final _confirmPasswordController = TextEditingController();
-
-  @override
-  void dispose() {
-    _nameController.dispose();
-    _emailController.dispose();
-    _passwordController.dispose();
-    _confirmPasswordController.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
     final localizations = AppStrings.of(context);
-    
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(localizations.register),
-        actions: const [
-          LanguageIconButton(),
-        ],
-      ),
-      body: StateView(
-        cubit: context.read<AuthBloc>().commonCubit,
-        child: BlocConsumer<AuthBloc, AuthState>(
-          listener: _handleListener,
-          builder: _buildContent,
-        ),
-      ),
-    );
-  }
+    final bloc = context.read<RegisterBloc>();
 
-  void _handleListener(BuildContext context, AuthState state) {
-    final effect = state.effect?.current;
-    if (effect != null) _handleEffect(context, effect);
-  }
-
-  Widget _buildContent(BuildContext context, AuthState state) {
-    final localizations = AppStrings.of(context);
-    
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16.0),
-      child: Form(
-        key: _formKey,
-        child: Column(
-          children: [
-            const SizedBox(height: 40),
-            TextFormField(
-              controller: _nameController,
-              decoration: InputDecoration(
-                labelText: localizations.name,
-                border: const OutlineInputBorder(),
-                prefixIcon: const Icon(Icons.person),
-              ),
-              validator: Validators.compose([
-                Validators.required(localizations.pleaseEnterName),
-                Validators.minLength(2, localizations.pleaseEnterName),
-              ]),
-            ),
-            const SizedBox(height: 16),
-            TextFormField(
-              controller: _emailController,
-              decoration: InputDecoration(
-                labelText: localizations.email,
-                border: const OutlineInputBorder(),
-                prefixIcon: const Icon(Icons.email),
-              ),
-              keyboardType: TextInputType.emailAddress,
-              validator: Validators.compose([
-                Validators.required(localizations.pleaseEnterEmail),
-                Validators.email(localizations.pleaseEnterValidEmail),
-              ]),
-            ),
-            const SizedBox(height: 16),
-            TextFormField(
-              controller: _passwordController,
-              decoration: InputDecoration(
-                labelText: localizations.password,
-                border: const OutlineInputBorder(),
-                prefixIcon: const Icon(Icons.lock),
-              ),
-              obscureText: true,
-              validator: Validators.compose([
-                Validators.required(localizations.pleaseEnterPassword),
-                Validators.minLength(6, localizations.passwordMinLength),
-              ]),
-            ),
-            const SizedBox(height: 16),
-            TextFormField(
-              controller: _confirmPasswordController,
-              decoration: InputDecoration(
-                labelText: localizations.confirmPassword,
-                border: const OutlineInputBorder(),
-                prefixIcon: const Icon(Icons.lock_outline),
-              ),
-              obscureText: true,
-              validator: (value) {
-                // Required check
-                if (Validators.isBlank(value)) {
-                  return localizations.pleaseEnterPassword;
-                }
-                // Password match check
-                if (value != _passwordController.text) {
-                  return localizations.passwordsDoNotMatch;
-                }
-                return null;
-              },
-            ),
-            const SizedBox(height: 24),
-            SizedBox(
-              width: double.infinity,
-              height: 48,
-              child: ElevatedButton(
-                onPressed: _onRegisterPressed,
-                child: Text(localizations.register),
-              ),
-            ),
-            const SizedBox(height: 16),
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: Text(localizations.alreadyHaveAccount),
-            ),
+    return BlocListener<RegisterBloc, RegisterState>(
+      listener: _handleEffect,
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(localizations.register),
+          actions: const [
+            LanguageIconButton(),
           ],
         ),
+        body: StateView(
+          cubit: bloc.commonCubit,
+          child: BlocBuilder<RegisterBloc, RegisterState>(
+            builder: (context, state) {
+              return SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      const SizedBox(height: 24),
+                      
+                      // Name field
+                      TextFormField(
+                        initialValue: state.name,
+                        decoration: InputDecoration(
+                          labelText: localizations.name,
+                          border: const OutlineInputBorder(),
+                          prefixIcon: const Icon(Icons.person),
+                          errorText: state.nameValidator.errorMessage,
+                        ),
+                        onChanged: (v) => bloc.add(RegisterNameChanged(v)),
+                      ),
+                      
+                      const SizedBox(height: 16),
+                      
+                      // Email field
+                      TextFormField(
+                        initialValue: state.email,
+                        decoration: InputDecoration(
+                          labelText: localizations.email,
+                          border: const OutlineInputBorder(),
+                          prefixIcon: const Icon(Icons.email),
+                          errorText: state.emailValidator.errorMessage,
+                        ),
+                        keyboardType: TextInputType.emailAddress,
+                        onChanged: (v) => bloc.add(RegisterEmailChanged(v)),
+                      ),
+                      
+                      const SizedBox(height: 16),
+                      
+                      // Birth Date picker (custom field example)
+                      _BirthDateField(
+                        value: state.birthDate,
+                        errorMessage: state.birthDateValidator.errorMessage,
+                        onDateSelected: (date) => bloc.add(RegisterBirthDateChanged(date)),
+                      ),
+                      
+                      const SizedBox(height: 16),
+                      
+                      // Password field
+                      TextFormField(
+                        initialValue: state.password,
+                        decoration: InputDecoration(
+                          labelText: localizations.password,
+                          border: const OutlineInputBorder(),
+                          prefixIcon: const Icon(Icons.lock),
+                          errorText: state.passwordValidator.errorMessage,
+                        ),
+                        obscureText: true,
+                        onChanged: (v) => bloc.add(RegisterPasswordChanged(v)),
+                      ),
+                      
+                      const SizedBox(height: 16),
+                      
+                      // Confirm Password field
+                      TextFormField(
+                        initialValue: state.confirmPassword,
+                        decoration: InputDecoration(
+                          labelText: localizations.confirmPassword,
+                          border: const OutlineInputBorder(),
+                          prefixIcon: const Icon(Icons.lock_outline),
+                          errorText: state.confirmPasswordValidator.errorMessage,
+                        ),
+                        obscureText: true,
+                        onChanged: (v) => bloc.add(RegisterConfirmPasswordChanged(v)),
+                      ),
+                      
+                      const SizedBox(height: 24),
+                      
+                      // Register button
+                      SizedBox(
+                        width: double.infinity,
+                        height: 48,
+                        child: ElevatedButton(
+                          onPressed: () => bloc.add(RegisterSubmitted()),
+                          child: Text(localizations.register),
+                        ),
+                      ),
+                      
+                      const SizedBox(height: 16),
+                      
+                      // Login link
+                      TextButton(
+                        onPressed: () => navigationService.pop(context),
+                        child: Text(localizations.alreadyHaveAccount),
+                      ),
+                      
+                      const SizedBox(height: 24),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
       ),
     );
   }
 
-  void _onRegisterPressed() {
-    if (_formKey.currentState!.validate()) {
-      context.read<AuthBloc>().add(
-        RegisterRequested(
-          email: _emailController.text,
-          password: _passwordController.text,
-          name: _nameController.text,
+  void _handleEffect(BuildContext context, RegisterState state) {
+    final effect = state.effect?.current;
+    if (effect == null) return;
+
+    final localizations = AppStrings.of(context);
+
+    if (effect is RegisterNavigateToHome) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(localizations.registerSuccess),
+          backgroundColor: Colors.green,
         ),
       );
+      // Navigate to home
+      navigationService.navigateTo('/home');
     }
   }
+}
 
-  void _handleEffect(BuildContext context, AuthEffect effect) {
+/// Custom date picker field with error display
+/// 
+/// Example of how to use FieldValidator with non-text fields.
+class _BirthDateField extends StatelessWidget {
+  final DateTime? value;
+  final String? errorMessage;
+  final ValueChanged<DateTime> onDateSelected;
+
+  const _BirthDateField({
+    required this.value,
+    required this.errorMessage,
+    required this.onDateSelected,
+  });
+
+  @override
+  Widget build(BuildContext context) {
     final localizations = AppStrings.of(context);
-    
-    switch (effect) {
-      case NavigateToHome():
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(localizations.registerSuccess),
-            backgroundColor: Colors.green,
+    final dateFormat = DateFormat.yMMMd();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        InkWell(
+          onTap: () => _showDatePicker(context),
+          child: InputDecorator(
+            decoration: InputDecoration(
+              labelText: localizations.birthDate,
+              border: const OutlineInputBorder(),
+              prefixIcon: const Icon(Icons.calendar_today),
+              errorText: errorMessage,
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  value != null 
+                    ? dateFormat.format(value!) 
+                    : localizations.selectDate,
+                  style: value != null 
+                    ? null 
+                    : TextStyle(color: Theme.of(context).hintColor),
+                ),
+                const Icon(Icons.arrow_drop_down),
+              ],
+            ),
           ),
-        );
-        break;
-      case NavigateToLogin():
-        Navigator.of(context).pop();
-        break;
-      case ShowError():
-        break;
-      case ShowSuccess():
-        break;
+        ),
+      ],
+    );
+  }
+
+  Future<void> _showDatePicker(BuildContext context) async {
+    final now = DateTime.now();
+    final minDate = DateTime(now.year - 100, 1, 1);
+    final maxDate = DateTime(now.year - 10, 12, 31); // Max 10 years ago
+    
+    final selected = await showDatePicker(
+      context: context,
+      initialDate: value ?? DateTime(now.year - 18, now.month, now.day),
+      firstDate: minDate,
+      lastDate: maxDate,
+    );
+    
+    if (selected != null) {
+      onDateSelected(selected);
     }
   }
 }

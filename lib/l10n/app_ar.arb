@@ -26,6 +26,13 @@
   "pleaseEnterName": "يرجى إدخال الاسم",
   "passwordsDoNotMatch": "كلمات المرور غير متطابقة",
   
+  "rememberMe": "تذكرني",
+  
+  "birthDate": "تاريخ الميلاد",
+  "pleaseSelectBirthDate": "يرجى اختيار تاريخ ميلادك",
+  "mustBeAtLeast18": "يجب أن يكون عمرك 18 سنة على الأقل",
+  "selectDate": "اختر التاريخ",
+  
   "selectLanguage": "اختر اللغة",
   "language": "اللغة"
 }
