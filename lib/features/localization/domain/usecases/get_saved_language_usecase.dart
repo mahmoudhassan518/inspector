@@ -1,6 +1,6 @@
 import 'package:inspector_core/inspector_core.dart';
-import '../model/language.dart';
-import '../repository/language_repository.dart';
+import 'package:inspector/features/localization/domain/model/language.dart';
+import 'package:inspector/features/localization/domain/repository/language_repository.dart';
 
 /// UseCase to get the saved language
 class GetSavedLanguageUseCase implements UseCase<Language?, NoParams> {

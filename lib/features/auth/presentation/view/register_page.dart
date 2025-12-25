@@ -89,15 +89,10 @@ class _RegisterPageContentState extends State<_RegisterPageContent> {
                 border: const OutlineInputBorder(),
                 prefixIcon: const Icon(Icons.person),
               ),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return localizations.pleaseEnterName;
-                }
-                if (value.length < 2) {
-                  return localizations.pleaseEnterName;
-                }
-                return null;
-              },
+              validator: Validators.compose([
+                Validators.required(localizations.pleaseEnterName),
+                Validators.minLength(2, localizations.pleaseEnterName),
+              ]),
             ),
             const SizedBox(height: 16),
             TextFormField(
@@ -108,15 +103,10 @@ class _RegisterPageContentState extends State<_RegisterPageContent> {
                 prefixIcon: const Icon(Icons.email),
               ),
               keyboardType: TextInputType.emailAddress,
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return localizations.pleaseEnterEmail;
-                }
-                if (!value.contains('@')) {
-                  return localizations.pleaseEnterValidEmail;
-                }
-                return null;
-              },
+              validator: Validators.compose([
+                Validators.required(localizations.pleaseEnterEmail),
+                Validators.email(localizations.pleaseEnterValidEmail),
+              ]),
             ),
             const SizedBox(height: 16),
             TextFormField(
@@ -127,15 +117,10 @@ class _RegisterPageContentState extends State<_RegisterPageContent> {
                 prefixIcon: const Icon(Icons.lock),
               ),
               obscureText: true,
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return localizations.pleaseEnterPassword;
-                }
-                if (value.length < 6) {
-                  return localizations.passwordMinLength;
-                }
-                return null;
-              },
+              validator: Validators.compose([
+                Validators.required(localizations.pleaseEnterPassword),
+                Validators.minLength(6, localizations.passwordMinLength),
+              ]),
             ),
             const SizedBox(height: 16),
             TextFormField(
@@ -147,9 +132,11 @@ class _RegisterPageContentState extends State<_RegisterPageContent> {
               ),
               obscureText: true,
               validator: (value) {
-                if (value == null || value.isEmpty) {
+                // Required check
+                if (Validators.isBlank(value)) {
                   return localizations.pleaseEnterPassword;
                 }
+                // Password match check
                 if (value != _passwordController.text) {
                   return localizations.passwordsDoNotMatch;
                 }

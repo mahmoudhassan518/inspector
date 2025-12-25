@@ -1,11 +1,11 @@
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../data/repository/language_repository_impl.dart';
-import '../data/source/language_local_data_source.dart';
-import '../domain/repository/language_repository.dart';
-import '../domain/usecases/get_saved_language_usecase.dart';
-import '../domain/usecases/save_language_usecase.dart';
-import '../presentation/bloc/language_cubit.dart';
+import 'package:inspector/features/localization/data/repository/language_repository_impl.dart';
+import 'package:inspector/features/localization/data/source/language_local_data_source.dart';
+import 'package:inspector/features/localization/domain/repository/language_repository.dart';
+import 'package:inspector/features/localization/domain/usecases/get_saved_language_usecase.dart';
+import 'package:inspector/features/localization/domain/usecases/save_language_usecase.dart';
+import 'package:inspector/features/localization/presentation/bloc/language_cubit.dart';
 
 final sl = GetIt.instance;
 

@@ -82,3 +82,4 @@ app.*.map.json
 /lib/l10n/app_localizations.dart
 /lib/l10n/app_localizations_ar.dart
 /lib/l10n/app_localizations_en.dart
+/.vscode/launch.json

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
-import '../../domain/model/language.dart';
-import '../bloc/language_cubit.dart';
-import '../model/language_state.dart';
+import 'package:inspector/features/localization/domain/model/language.dart';
+import 'package:inspector/features/localization/presentation/bloc/language_cubit.dart';
+import 'package:inspector/features/localization/presentation/model/language_state.dart';
 import 'package:inspector/features/localization/app_strings.dart';
 
 /// Shows language selection dialog

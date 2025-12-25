@@ -1,9 +1,9 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:inspector_core/inspector_core.dart';
-import '../../domain/model/language.dart';
-import '../../domain/usecases/get_saved_language_usecase.dart';
-import '../../domain/usecases/save_language_usecase.dart';
-import '../model/language_state.dart';
+import 'package:inspector/features/localization/domain/model/language.dart';
+import 'package:inspector/features/localization/domain/usecases/get_saved_language_usecase.dart';
+import 'package:inspector/features/localization/domain/usecases/save_language_usecase.dart';
+import 'package:inspector/features/localization/presentation/model/language_state.dart';
 
 /// Cubit for managing language state
 /// Auto-loads saved language on creation
@@ -25,7 +25,7 @@ class LanguageCubit extends Cubit<LanguageState> {
   Future<void> loadLanguage() async {
     try {
       emit(state.copyWith(isLoading: true));
-      final savedLanguage = await _getSavedLanguageUseCase(NoParams());
+      final savedLanguage = await _getSavedLanguageUseCase(const NoParams());
       emit(state.copyWith(
         currentLanguage: savedLanguage ?? Language.english,
         isLoading: false,

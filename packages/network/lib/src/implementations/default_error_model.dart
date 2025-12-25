@@ -1,4 +1,4 @@
-import '../interfaces/error_model.dart';
+import 'package:inspector_network/src/interfaces/error_model.dart';
 
 
 /// Default error model implementation

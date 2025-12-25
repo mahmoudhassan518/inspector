@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'common_state.dart';
+import 'package:inspector_core/src/common/common_state.dart';
 
 /// Global common cubit instance for global toasts
 late CommonCubit globalCommonCubit;

@@ -1,4 +1,4 @@
-import 'network_exception.dart';
+import 'package:inspector_network/src/exceptions/network_exception.dart';
 
 /// Business exception with error code from API
 class BusinessException extends NetworkException {

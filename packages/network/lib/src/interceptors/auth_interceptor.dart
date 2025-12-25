@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 
-import '../interfaces/token_provider.dart';
-import '../interfaces/auth_header_provider.dart';
+import 'package:inspector_network/src/interfaces/token_provider.dart';
+import 'package:inspector_network/src/interfaces/auth_header_provider.dart';
 
 /// Auth interceptor for adding authorization headers
 /// and handling token refresh

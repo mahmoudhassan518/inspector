@@ -1,8 +1,8 @@
 import 'package:dio/dio.dart';
 
-import '../interfaces/error_model.dart';
-import '../interfaces/error_mapper.dart';
-import '../exceptions/network_exception.dart';
+import 'package:inspector_network/src/interfaces/error_model.dart';
+import 'package:inspector_network/src/interfaces/error_mapper.dart';
+import 'package:inspector_network/src/exceptions/network_exception.dart';
 
 
 /// Error interceptor for mapping Dio errors to NetworkExceptions

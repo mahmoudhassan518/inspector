@@ -1,6 +1,6 @@
-import '../../domain/model/language.dart';
-import '../../domain/repository/language_repository.dart';
-import '../source/language_local_data_source.dart';
+import 'package:inspector/features/localization/domain/model/language.dart';
+import 'package:inspector/features/localization/domain/repository/language_repository.dart';
+import 'package:inspector/features/localization/data/source/language_local_data_source.dart';
 
 /// Implementation of LanguageRepository
 class LanguageRepositoryImpl implements LanguageRepository {

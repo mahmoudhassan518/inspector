@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 
-import '../interfaces/network_client.dart';
-import '../exceptions/network_exception.dart';
+import 'package:inspector_network/src/interfaces/network_client.dart';
+import 'package:inspector_network/src/exceptions/network_exception.dart';
 
 
 /// Dio implementation of NetworkClient

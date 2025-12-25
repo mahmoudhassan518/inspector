@@ -62,6 +62,7 @@ dependencies:
   inspector_network:
     path: packages/network
 
+  intl: any
 dev_dependencies:
   flutter_test:
     sdk: flutter

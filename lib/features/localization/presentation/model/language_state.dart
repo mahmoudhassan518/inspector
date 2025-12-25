@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import '../../domain/model/language.dart';
+import 'package:inspector/features/localization/domain/model/language.dart';
 
 /// State for LanguageBloc
 class LanguageState extends Equatable {

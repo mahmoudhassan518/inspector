@@ -2,8 +2,8 @@ import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../common/common_cubit.dart';
-import '../common/common_state.dart';
+import 'package:inspector_core/src/common/common_cubit.dart';
+import 'package:inspector_core/src/common/common_state.dart';
 
 /// Base bloc with error handling and optional CommonCubit integration
 abstract class BaseBloc<E, S> extends Bloc<E, S> {

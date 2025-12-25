@@ -1,4 +1,4 @@
-import 'app_exception.dart';
+import 'package:inspector_core/src/exceptions/app_exception.dart';
 
 /// Cache-related exceptions
 class CacheException extends AppException {

@@ -45,13 +45,11 @@ class _LoginPageContentState extends State<_LoginPageContent> {
   @override
   Widget build(BuildContext context) {
     final localizations = AppStrings.of(context);
-    
+
     return Scaffold(
       appBar: AppBar(
         title: Text(localizations.login),
-        actions: const [
-          LanguageIconButton(),
-        ],
+        actions: const [LanguageIconButton()],
       ),
       body: StateView(
         cubit: context.read<AuthBloc>().commonCubit,
@@ -70,7 +68,7 @@ class _LoginPageContentState extends State<_LoginPageContent> {
 
   Widget _buildContent(BuildContext context, AuthState state) {
     final localizations = AppStrings.of(context);
-    
+
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -87,15 +85,10 @@ class _LoginPageContentState extends State<_LoginPageContent> {
                   border: const OutlineInputBorder(),
                 ),
                 keyboardType: TextInputType.emailAddress,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return localizations.pleaseEnterEmail;
-                  }
-                  if (!value.contains('@')) {
-                    return localizations.pleaseEnterValidEmail;
-                  }
-                  return null;
-                },
+                validator: Validators.compose([
+                  Validators.required(localizations.pleaseEnterEmail),
+                  Validators.email(localizations.pleaseEnterValidEmail),
+                ]),
               ),
               const SizedBox(height: 16),
               TextFormField(
@@ -105,15 +98,10 @@ class _LoginPageContentState extends State<_LoginPageContent> {
                   border: const OutlineInputBorder(),
                 ),
                 obscureText: true,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return localizations.pleaseEnterPassword;
-                  }
-                  if (value.length < 6) {
-                    return localizations.passwordMinLength;
-                  }
-                  return null;
-                },
+                validator: Validators.compose([
+                  Validators.required(localizations.pleaseEnterPassword),
+                  Validators.minLength(6, localizations.passwordMinLength),
+                ]),
               ),
               const SizedBox(height: 24),
               SizedBox(
@@ -126,7 +114,7 @@ class _LoginPageContentState extends State<_LoginPageContent> {
               ),
               const SizedBox(height: 16),
               TextButton(
-                onPressed: () => Navigator.of(context).pushNamed('/register'),
+                onPressed: () => navigationService.navigateTo('/register'),
                 child: Text(localizations.dontHaveAccount),
               ),
               const SizedBox(height: 48),
@@ -140,17 +128,17 @@ class _LoginPageContentState extends State<_LoginPageContent> {
   void _onLoginPressed() {
     if (_formKey.currentState!.validate()) {
       context.read<AuthBloc>().add(
-            LoginRequested(
-              email: _emailController.text,
-              password: _passwordController.text,
-            ),
-          );
+        LoginRequested(
+          email: _emailController.text,
+          password: _passwordController.text,
+        ),
+      );
     }
   }
 
   void _handleEffect(BuildContext context, AuthEffect effect) {
     final localizations = AppStrings.of(context);
-    
+
     switch (effect) {
       case NavigateToHome():
         ScaffoldMessenger.of(context).showSnackBar(

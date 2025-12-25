@@ -1,4 +1,4 @@
-import '../model/language.dart';
+import 'package:inspector/features/localization/domain/model/language.dart';
 
 /// Repository for managing language preferences
 abstract class LanguageRepository {

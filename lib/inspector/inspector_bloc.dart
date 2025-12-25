@@ -1,7 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:inspector/features/localization/localization_feature.dart';
-import 'inspector_event.dart';
-import 'inspector_state.dart';
+import 'package:inspector/inspector/inspector_event.dart';
+import 'package:inspector/inspector/inspector_state.dart';
 
 /// Global app bloc containing all global sub-cubits
 class InspectorBloc extends Bloc<InspectorEvent, InspectorState> {

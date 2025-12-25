@@ -21,8 +21,30 @@ linter:
   # `// ignore_for_file: name_of_lint` syntax on the line or in the file
   # producing the lint.
   rules:
-    # avoid_print: false  # Uncomment to disable the `avoid_print` rule
-    # prefer_single_quotes: true  # Uncomment to enable the `prefer_single_quotes` rule
+    # === Logging Rules ===
+    # Avoid print statements - use AppLogger instead
+    # Usage: AppLogger.d('debug'), AppLogger.i('info'), AppLogger.w('warn'), AppLogger.e('error')
+    avoid_print: true
+    
+    # === Import Rules ===
+    # Prefer package imports over relative imports for consistency
+    # Example: use 'package:inspector/core/core.dart' instead of '../core/core.dart'
+    always_use_package_imports: true
+    
+    # === Code Quality Rules ===
+    # Require const constructors where possible
+    prefer_const_constructors: true
+    prefer_const_declarations: true
+    
+    # Prefer single quotes for strings
+    prefer_single_quotes: true
+    
+    # Avoid unnecessary await
+    unnecessary_await_in_return: true
+    
+    # Prefer final for local variables that are not reassigned
+    prefer_final_locals: true
 
 # Additional information about this file can be found at
 # https://dart.dev/guides/language/analysis-options
+

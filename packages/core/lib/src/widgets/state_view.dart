@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../common/common_cubit.dart';
-import '../common/common_state.dart';
+import 'package:inspector_core/src/common/common_cubit.dart';
+import 'package:inspector_core/src/common/common_state.dart';
 
 /// StateView - wrapper for pages with loading overlay and snackbar
 class StateView extends StatelessWidget {

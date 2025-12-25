@@ -1,4 +1,5 @@
 /// Localization Feature Barrel Export
+library;
 export 'domain/model/language.dart';
 export 'presentation/bloc/language_cubit.dart';
 export 'presentation/model/language_state.dart';
